@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Money Calcutor</title>
+</head>
+
+<body>
+    <header>
+        <h1>💰 Money Tracker</h1>
+    </header>
+    <section class="paymentDtl">
+        <h2>Total Balance</h2>
+        <p style="font-size: 4rem; color: #9c167d; font-weight: bold;">
+            <span id="TotalAmount">0</span>
+            <span>₹</span>
+            </h4>
+    </section>
+    <section class="inputForm">
+        <input id="Amount" type="number" placeholder="Amount" required>
+        <input id="Note" type="text" placeholder="Notes Here" required>
+        <br><br>
+        <button id="btnOne">Add Money</button>
+        <button id="btnTwo">Spend Money</button>
+    </section>
+    <section class="transaction">
+        <h3>Transactions</h3>
+        <!-- <div class="searchContainer">
+            <input type="text"><button id="SearchBtn">Search</button>
+        </div> -->
+        <button id="Clearlist">Clear All Transactions history</button>
+        <button id="Reset">Reset</button>
+        <div id="list">
+        </div>
+
+    </section>
+
+
+
+
+    <script src="script.js"></script>
+</body>
+</html>
