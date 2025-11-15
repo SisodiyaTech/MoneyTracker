@@ -16,56 +16,65 @@ let DateFun = () => {
     return formatDate;
 }
 
+// -------- Function For add history list-----------------
+
+function AddHistor(Amount, Notes, Type) {
+
+    let dateNow = DateFun();
+
+    // let AmountVal = InputAmount.value;
+    // let noteVal = InputNotes.value;
+
+    let Arrr = JSON.parse(localStorage.getItem("hisArr")) || [];
+
+    let ArrHis = [Amount, Notes, dateNow, Type];
+
+    Arrr.unshift(ArrHis);
+
+    let historyArr = JSON.stringify(Arrr);
+
+    localStorage.setItem("hisArr", historyArr);
+
+    console.log((JSON.parse(localStorage.getItem("hisArr"))));
+
+    let newDiv = document.createElement("div");
+    newDiv.innerHTML = `
+        <div class="${Type}">
+                <p>${Amount}</p>
+                <p>${Notes}</p>
+                <p>${dateNow}</p>
+            </div>
+    ` ;
+    TransList.append(newDiv);
+    InputAmount.value = "";
+    InputNotes.value = "";
+    location.reload();
+}
+
+
+
 
 //  ---------------Add Eventlistner for Add Money---------------
 
 AddMoney.addEventListener("click", (e) => {
     e.preventDefault();
-    
+
     if (InputAmount.value === "" || InputNotes.value === "") {
         alert("Please fill Amount and Notes");
     } else {
-        
-        let dateNow = DateFun();
+
         TotalAmount.innerText = Number(InputAmount.value) + Number(TotalAmount.innerText);
 
         let myAmount = TotalAmount.innerText;
 
         localStorage.setItem("myTotAmount", JSON.stringify(myAmount));
 
-        let AmountVal = InputAmount.value;
-        let noteVal = InputNotes.value;
+        AddHistor(InputAmount.value, InputNotes.value, "Items");
 
-        let Arrr = JSON.parse(localStorage.getItem("hisArr")) || [];
-
-        let ArrHis = [AmountVal, noteVal, dateNow, "add"];
-
-        Arrr.unshift(ArrHis);
-
-        let historyArr = JSON.stringify(Arrr);
-
-        localStorage.setItem("hisArr", historyArr);
-        
-        console.log((JSON.parse(localStorage.getItem("hisArr"))));
-        
-        let newDiv = document.createElement("div");
-
-
-        
-        newDiv.innerHTML = `
-        <div class="Items">
-                <p>${AmountVal}</p>
-                <p>${noteVal}</p>
-                <p>${dateNow}</p>
-            </div>
-    ` ;
-        TransList.append(newDiv);
-        InputAmount.value = "";
-        InputNotes.value = "";
-        location.reload();
     }
 
 });
+//  ---------------Add Eventlistner for Spend Money---------------
 
 SpendMoney.addEventListener("click", (e) => {
     e.preventDefault();
@@ -73,10 +82,10 @@ SpendMoney.addEventListener("click", (e) => {
     if (InputAmount.value === "" || InputNotes.value === "") {
         alert("Please fill Amount and Notes");
     } else {
-        
+
         let dateNow = DateFun();
 
-        
+
         if (Number(InputAmount.value) > Number(TotalAmount.innerText)) {
             alert("Not Enough Money");
         } else {
@@ -86,32 +95,7 @@ SpendMoney.addEventListener("click", (e) => {
 
             localStorage.setItem("myTotAmount", JSON.stringify(myAmount));
 
-            let AmountVal = InputAmount.value;
-            let noteVal = InputNotes.value;
-
-            let Arrr = JSON.parse(localStorage.getItem("hisArr")) || [];
-
-            let ArrHis = [AmountVal, noteVal, dateNow, "spend"];
-
-            Arrr.unshift(ArrHis);
-
-            localStorage.setItem("hisArr", JSON.stringify(Arrr));
-
-            let newDiv = document.createElement("div");
-            
-
-            
-            newDiv.innerHTML = `
-            <div class="RedItems">
-                <p>${AmountVal}</p>
-                <p>${noteVal}</p>
-                <p>${dateNow}</p>
-            </div>
-    ` ;
-            TransList.append(newDiv);
-            InputAmount.value = "";
-            InputNotes.value = "";
-            location.reload();
+            AddHistor(InputAmount.value, InputNotes.value, "RedItems");
         }
     }
 
@@ -128,9 +112,9 @@ window.addEventListener("DOMContentLoaded", () => {
     let getData1 = JSON.parse(localStorage.getItem("hisArr")) || [];
     getData1.forEach((item) => {
         let newDiv = document.createElement("div");
-        newDiv.classList.add(item[3] === "spend" ? "RedItems" : "Items");
+        newDiv.classList.add(item[3] === "RedItems" ? "RedItems" : "Items");
         newDiv.innerHTML = `
-        <p>${item[0]}</p>
+            <p>${item[0]}</p>
             <p>${item[1]}</p>
             <p>${item[2]}</p>
         `;
@@ -139,17 +123,52 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 
-document.getElementById("Clearlist").addEventListener("click" , () => {
+document.getElementById("Clearlist").addEventListener("click", () => {
     localStorage.removeItem("hisArr");
     TransList.innerHTML = "";
 })
 
 
-document.getElementById("Reset").addEventListener("click" , () => {
+document.getElementById("Reset").addEventListener("click", () => {
     localStorage.clear();
     TransList.innerHTML = "";
     TotalAmount.innerText = 0;
 
 });
 
+//  ---------------Search Specific Keyword------------------
+SearchInput.addEventListener("input", () => {
+    let text = SearchInput.value.toLowerCase();
+
+    // Load all data
+    let DataHist = JSON.parse(localStorage.getItem("hisArr")) || [];
+
+    // Filter by Notes
+    let filtered = DataHist.filter((item) =>
+        item[1].toLowerCase().includes(text)
+    );
+
+    // Show filtered results
+    ShowFilteredData(filtered);
+});
+
+// -----------Display Function --------------------------------
+
+function ShowFilteredData(dataArray) {
+    TransList.innerHTML = ""; // Clear old UI
+
+    dataArray.forEach(item => {
+        let newDiv = document.createElement("div");
+
+        newDiv.classList.add(item[3] === "RedItems" ? "RedItems" : "Items");
+
+        newDiv.innerHTML = `
+            <p>${item[0]}</p>
+            <p>${item[1]}</p>
+            <p>${item[2]}</p>
+        `;
+
+        TransList.append(newDiv);
+    });
+}
 
